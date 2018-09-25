@@ -1,25 +1,43 @@
 package tddmicroexercises.tirepressuremonitoringsystem;
 
 
-import org.assertj.core.api.Condition;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestAlarm {
+
+    public static final boolean ON = true;
+    public static final boolean OFF = false;
 
     @Test
     public void uncheckedAlarmIsOff() {
         Alarm alarm = new Alarm();
-        assertEquals(false, alarm.isAlarmOn());
+        boolean actual = alarm.isAlarmOn();
+        assertEquals(OFF, actual);
     }
 
     @Test
     public void checkedAlarmWithLowPressureTurnsAlarmOn() {
-        Alarm alarm = new Alarm();
-        alarm.check();
-        assertEquals(true, alarm.isAlarmOn());
-
-
-
+        double pressure = 16.9;
+        checkAlarm(pressure, ON);
     }
+
+    @Test
+    public void checkedAlarmWithPrettyHghPressureKeepsAlarmOff() {
+        double pressure = 21;
+        boolean expected = OFF;
+
+        checkAlarm(pressure, expected);
+    }
+
+    private void checkAlarm(double pressure, boolean expected) {
+        Sensor stubSensor = () -> pressure;
+        Alarm alarm = new Alarm(stubSensor);
+        alarm.check();
+
+        boolean actual = alarm.isAlarmOn();
+        assertEquals(expected, actual);
+    }
+
 }
